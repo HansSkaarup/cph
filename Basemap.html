@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset= "utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Semester 1 Group Project</title>
+    <!--Leaflet-->
+    <!--include leaflet CSS-->
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css"/>
+	<script src="jquery/jquery-3.1.1.min.js"></script>
+    <!--include leaflet javascript file-->
+    <script src="lib/leaflet/leaflet.js"></script>
+	<script>// type="text/javascript" src="dist/leaflet.ajax.js"></script>
+	<!--include geosearch files-->
+	<link rel="stylesheet" href="lib/L.GeoSearch-develop/src/css/l.geosearch.css" />
+    <script src="lib/L.GeoSearch-develop/src/js/l.control.geosearch.js"></script>
+    <script src="lib/L.GeoSearch-develop/src/js/l.geosearch.provider.openstreetmap.js"></script>
+    <!--include sidebar files-->
+    <script src="https://use.fontawesome.com/fea527cdc3.js"></script>
+    <link rel="stylesheet" href="lib/sidebar-v2-master/css/leaflet-sidebar.css" />
+    <script type="text/javascript" src="lib/sidebar-v2-master/js/leaflet-sidebar.js"></script>
+    <!--Load Dawa autocomplete-->
+    <link rel="stylesheet" href="lib/jquery-ui/themes/start/jquery-ui.css">
+    <link rel="stylesheet" href="lib/jquery-ui/themes/start/theme.css">
+    <script src="lib/jquery-ui/jquery-ui.js"></script>
+    <script src="lib/autocomplete-0.4.1/dawa-autocomplete.js"></script>
+    <!---graph-->
+    <script src="lib/canvasjs.min.js"></script>
+    <!--include geoJson file-->
+    <style type="text/css">
+    <!--to get a full screen map-->
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body,#mapid{
+            height:100%;
+            width:100%;
+        }
+
+        .ui-front {z-index: 9999999 !important;  }
+
+    </style>
+</head>
+<body>
+
+<div id="sidebar" class="sidebar collapsed">
+    <!-- Nav tabs -->
+    <div class="sidebar-tabs">
+        <ul role="tablist">
+            <li><a href="#home" role="tab"><i class="fa fa-search"></i></a></li>
+            <li><a href="#ageStructure" role="tab"><i class="fa fa-bar-chart"></i></a></li>
+            <li><a href="#parks" role="tab"><i class="fa fa-leaf"></i></a></li>
+            <li><a href="#transit" role="tab"><i class="fa fa-train"></i></a></li>
+            <li><a href="https://github.com/spunktl/1.Semester" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+        </ul>
+
+        <ul role="tablist">
+            <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+        </ul>
+    </div>
+
+    <!-- Tab panes -->
+    <div class="sidebar-content">
+        <div class="sidebar-pane" id="home">
+            <h1 class="sidebar-header">
+                search address
+                <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            </h1>
+
+            <p>Enter an address in Copenhagen to get an analysis of the location:</p>
+
+            <!-- Autocomplete adress search line -->
+            <p><label for="adgangsadresse-autocomplete">Autocomplete af adresse i københavn</label></p>
+            <input type="text" id="adgangsadresse-autocomplete" style="width: 400px;">
+
+            <button type="button" onclick=testfunction()>Show data (temporary)!</button>
+
+            <p class="lorem">DATA</p>
+            <p id="showdata"></p>
+            <p id="showdata2"></p>
+
+            <p class="lorem">This is a web GIS application which uses the address you enter above and analyses it according to various geographic characteristics.</p>
+
+            <p class="lorem">In the initial stage, we have decided to use proximity to parks and green spaces as one variable, and the age structure of the city block as another.</p>
+
+            <p class="lorem">These two variables represent two different types of data: distance to services (vector) and area characteristics (raster). In the future other datasets will be added to expand the analysis.</p>
+
+
+        </div>
+
+        <div class="sidebar-pane" id="ageStructure">
+            <div id="chartContainer" style="position: absolute; padding-top: 50px"></div>
+            <h1 class="sidebar-header">age structure<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+
+        </div>
+
+        <div class="sidebar-pane" id="parks">
+            <h1 class="sidebar-header">parks in the area<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+        </div>
+        <div class="sidebar-pane" id="transit">
+            <h1 class="sidebar-header">transit nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+        </div>
+
+        <div class="sidebar-pane" id="settings">
+            <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+        </div>
+    </div>
+</div>
+
+<!--div element with id where you want your map to be-->
+<h1>Adress Information Map</h1>
+
+
+<div id="mapid"></div>
+
+
+<script>
+var nongeo;
+var adressedata;
+var geojsonphp;
+var adress;
+var agedata;
+var rode_nr = 36;
+
+//Autocomplete search function
+$('#adgangsadresse-autocomplete').dawaautocomplete({
+  baseUrl: 'http://dawa.aws.dk',
+  minLength: 2,
+  adgangsadresserOnly: true,
+  params: {kommunekode: 101},
+  select: function(event, input) {
+      adress = input.tekst;
+      console.log(input);
+
+    // denne funktion bliver kaldt når brugeren vælger en adresse.
+  },
+  error: function(xhr, status, error) {
+    // denne funktion bliver kaldt ved fejl
+  }
+});
+
+
+    //		<!--initialize the map and set its view to chosen geographical coordinates and zoom level-->
+    var mymap = L.map('mapid').setView([55.676, 12.568], 12);
+
+    <!--load a tile layer Mapbox Streets tile layer-->
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id:'clarineo.23o81n9e',
+        accessToken:'pk.eyJ1IjoiY2xhcmluZW8iLCJhIjoiY2l2aDJocjZ0MDA1ajJvb3djeTdidWxyaSJ9.HVE2DplZgfv5T4FSUqah7A'
+    }).addTo(mymap);
+
+	new L.Control.GeoSearch({
+        provider: new L.GeoSearch.Provider.OpenStreetMap(),
+        showPopup: true
+    }).addTo(mymap);
+
+    var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
+
+var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
+runsqlfunction.addEventListener("keydown", function (enter) {
+    if (enter.keyCode === 13) {
+        validate(enter);
+    }
+});
+function validate(enter) {sqlfunction()};
+
+function sqlfunction(){
+    //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+$.getJSON('php/Adressgetjson.php?adresse=' + adress, function(msg){
+    console.log(msg);
+        adressedata = msg;
+        //alert(msg);
+	var geojsonphp3 = new L.GeoJSON(msg,{onEachFeature:function( feature, layer ){
+     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
+	  }
+	  }).addTo(mymap);
+    mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
+
+
+    })
+
+    //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+$.getJSON('php/age.php?adresse=' + adress, function(data) {
+
+    agedata = data;
+    console.log(agedata);
+    //alert(msg);
+    var geojsonphp4 = new L.GeoJSON(data, {
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
+        }
+    }).addTo(mymap);
+})
+
+$.getJSON('php/park.php?adresse=' + adress, function(park){
+
+        parkdata = park;
+        console.log(parkdata);
+        //alert(msg);
+	var geojsonphp4 = new L.GeoJSON(park,{onEachFeature:function( feature, layer ){
+     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
+	  }
+	  }).addTo(mymap);
+
+    })
+
+$.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function(data2) {
+
+    nongeo = data2;
+    console.log(data2);
+
+    console.log("Succesfull SQL load")
+})
+};
+
+function testfunction(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
+};
+
+
+    // Get the socio data from the database
+var socioData;
+$.getJSON('socio.php?rode_nr=' + rode_nr, function(data5) {
+        socioData = data5.data
+    console.log(socioData);
+    //Create chart to be displayed in chartContainer
+    var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "theme2",
+            animationEnabled: true,
+            width:300,
+            title: {
+                text: "age groups %"
+            },
+            data: [
+                {
+                    type: "column",
+                    dataPoints: socioData
+                }
+            ]
+        });
+        chart.render();
+});
+
+
+/*
+    $(function () {
+        var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "theme2",
+            animationEnabled: true,
+            width:300,
+            title: {
+                text: "age groups %"
+            },
+            data: [
+                {
+                    type: "column",
+                    dataPoints: socioData
+                }
+            ]
+        });
+        chart.render();
+    });
+*/
+</script>
+</body>
+</html>
+
