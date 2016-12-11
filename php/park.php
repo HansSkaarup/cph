@@ -36,8 +36,8 @@ if (empty($_GET['adresse'])) {
     $adresse = $_GET['adresse'];
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT park.gid, st_asgeojson(park.geom) AS geojson
-FROM park, adresser WHERE ST_Dwithin(adresser.geom, park.geom, 0.01)
+$sql = "SELECT park.gid, st_asgeojson(st_transform(park.geom, 4326)) AS geojson
+FROM park, adresser WHERE ST_Dwithin(adresser.geom, park.geom, 5000)
 AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";
 
 
