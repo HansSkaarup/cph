@@ -165,6 +165,8 @@ runsqlfunction.addEventListener("keydown", function (enter) {
 });
 function validate(enter) {sqlfunction()};
 
+//SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
+//when all the $.getJSON's has run.
 function sqlfunction() {
     //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
     $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
