@@ -27,7 +27,7 @@ function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f 
  
 
 # Connect to PostgreSQL database
-$conn = pg_connect("dbname='Semester1' user='postgres' password='Empire' host='localhost'");
+$conn = pg_connect("dbname='Semester1' user='postgres' password='postgres' host='localhost'");
 if (!$conn) {
     echo "Not connected : " . pg_error();
     exit;
@@ -40,7 +40,7 @@ if (empty($_GET['adresse'])) {
     $adresse = $_GET['adresse'];
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT socio_data.rode_nr, socio_data.rodenavn, st_asgeojson(socio_data.geom) AS geojson
+$sql = "SELECT socio_data.rode_nr, socio_data.rodenavn, st_asgeojson(st_transform(socio_data.geom, 4326)) AS geojson
 FROM socio_data, adresser WHERE ST_intersects(adresser.geom, socio_data.geom)
 AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' limit 1";
 

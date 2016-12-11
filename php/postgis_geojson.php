@@ -58,7 +58,7 @@ $limit      = $_GET['limit'];
 $offset     = $_GET['offset'];
 
 # Connect to PostgreSQL database
-$conn = pg_connect("dbname='mydbname' user='myusername' password='mypassword' host='localhost'");
+$conn = pg_connect("dbname='Semester1' user='postrgres' password='postgres' host='localhost'");
 if (!$conn) {
     echo "Not connected : " . pg_error();
     exit;

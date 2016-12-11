@@ -29,14 +29,22 @@ function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f 
 
 
 # Connect to PostgreSQL database
-$conn = pg_connect("dbname='Semester1' user='postgres' password='Empire' host='localhost'");
+$conn = pg_connect("dbname='Semester1' user='postgres' password='postgres' host='localhost'");
 if (!$conn) {
     echo "Not connected : " . pg_error();
     exit;
 }
+# If no input to adress, echo error message. Otherwise continue and set variable adress = input from GET function.
+if (empty($_GET['adresse'])) {
+    echo "missing required paramater: <i>adresse_input</i>";
+    exit;
+} else
+    $adresse = $_GET['adresse'];
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT alder_pct_, alder_pct0, alder_pct1, alder_pct2, alder_pct3, alder_pct4, alder_pct5 FROM socio_data WHERE rode_nr = " . $_GET['rode_nr'];
+$sql = "SELECT alder_pct_, alder_pct0, alder_pct1, alder_pct2, alder_pct3, alder_pct4, alder_pct5 
+FROM socio_data, adresser WHERE st_intersects(adresser.geom, socio_data.geom) 
+AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";
 
 
 //echo $sql;
