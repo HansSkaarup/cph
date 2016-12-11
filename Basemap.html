@@ -74,7 +74,7 @@
             <p><label for="adgangsadresse-autocomplete">Autocomplete af adresse i københavn</label></p>
             <input type="text" id="adgangsadresse-autocomplete" style="width: 400px;">
 
-            <button type="button" onclick=testfunction()>Show data (temporary)!</button>
+            <button type="button" onclick=sqlfunction()>Go!</button>
 
             <p class="lorem">DATA</p>
             <p id="showdata"></p>
@@ -109,8 +109,6 @@
 </div>
 
 <!--div element with id where you want your map to be-->
-<h1>Adress Information Map</h1>
-
 
 <div id="mapid"></div>
 
@@ -167,54 +165,60 @@ runsqlfunction.addEventListener("keydown", function (enter) {
 });
 function validate(enter) {sqlfunction()};
 
-function sqlfunction(){
+function sqlfunction() {
     //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
-$.getJSON('php/Adressgetjson.php?adresse=' + adress, function(msg){
-    console.log(msg);
-        adressedata = msg;
-        //alert(msg);
-	var geojsonphp3 = new L.GeoJSON(msg,{onEachFeature:function( feature, layer ){
-     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
-	  }
-	  }).addTo(mymap);
-    mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
+    $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
+                console.log(msg);
+                adressedata = msg;
+                //alert(msg);
+                var geojsonphp3 = new L.GeoJSON(msg, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
+                    }
+                }).addTo(mymap);
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
 
 
-    })
+            }),
 
-    //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
-$.getJSON('php/age.php?adresse=' + adress, function(data) {
+            //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+            $.getJSON('php/age.php?adresse=' + adress, function (data) {
 
-    agedata = data;
-    console.log(agedata);
-    //alert(msg);
-    var geojsonphp4 = new L.GeoJSON(data, {
-        onEachFeature: function (feature, layer) {
-            layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
-        }
-    }).addTo(mymap);
-})
+                agedata = data;
+                console.log(agedata);
+                //alert(msg);
+                var geojsonphp4 = new L.GeoJSON(data, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
+                    }
+                }).addTo(mymap);
+            }),
 
-$.getJSON('php/park.php?adresse=' + adress, function(park){
+            $.getJSON('php/park.php?adresse=' + adress, function (park) {
 
-        parkdata = park;
-        console.log(parkdata);
-        //alert(msg);
-	var geojsonphp4 = new L.GeoJSON(park,{onEachFeature:function( feature, layer ){
-     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
-	  }
-	  }).addTo(mymap);
+                parkdata = park;
+                console.log(parkdata);
+                //alert(msg);
+                var geojsonphp4 = new L.GeoJSON(park, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
+                    }
+                }).addTo(mymap);
 
-    })
+            }),
 
-$.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function(data2) {
+            $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function (data2) {
 
-    nongeo = data2;
-    console.log(data2);
+                nongeo = data2;
+                console.log(data2);
 
-    console.log("Succesfull SQL load")
-})
+                console.log("Succesfull SQL load")
+
+            })
+    ).then(testfunction, failfunction)
 };
+
+function failfunction() {console.log("SQL load failed")}
 
 function testfunction(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
 document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
