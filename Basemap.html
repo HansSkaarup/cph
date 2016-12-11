@@ -76,7 +76,7 @@
 
             <button type="button" onclick=sqlfunction()>Go!</button>
 
-            <p class="lorem">DATA</p>
+
             <p id="showdata"></p>
             <p id="showdata2"></p>
 
@@ -120,7 +120,7 @@ var geojsonphp;
 var adress;
 var agedata;
 var rode_nr = 36;
-
+//Test
 //Autocomplete search function
 $('#adgangsadresse-autocomplete').dawaautocomplete({
   baseUrl: 'http://dawa.aws.dk',
@@ -217,12 +217,12 @@ function sqlfunction() {
                 console.log("Succesfull SQL load")
 
             })
-    ).then(testfunction, failfunction)
+    ).then(showdata, failfunction)
 };
 
 function failfunction() {console.log("SQL load failed")}
 
-function testfunction(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
 document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
 };
 
