@@ -11,10 +11,6 @@
     <!--include leaflet javascript file-->
     <script src="lib/leaflet/leaflet.js"></script>
 	<script>// type="text/javascript" src="dist/leaflet.ajax.js"></script>
-	<!--include geosearch files-->
-	<link rel="stylesheet" href="lib/L.GeoSearch-develop/src/css/l.geosearch.css" />
-    <script src="lib/L.GeoSearch-develop/src/js/l.control.geosearch.js"></script>
-    <script src="lib/L.GeoSearch-develop/src/js/l.geosearch.provider.openstreetmap.js"></script>
     <!--include sidebar files-->
     <script src="https://use.fontawesome.com/fea527cdc3.js"></script>
     <link rel="stylesheet" href="lib/sidebar-v2-master/css/leaflet-sidebar.css" />
@@ -152,11 +148,6 @@ $('#adgangsadresse-autocomplete').dawaautocomplete({
         maxZoom: 20,
         id:'clarineo.23o81n9e',
         accessToken:'pk.eyJ1IjoiY2xhcmluZW8iLCJhIjoiY2l2aDJocjZ0MDA1ajJvb3djeTdidWxyaSJ9.HVE2DplZgfv5T4FSUqah7A'
-    }).addTo(mymap);
-
-	new L.Control.GeoSearch({
-        provider: new L.GeoSearch.Provider.OpenStreetMap(),
-        showPopup: true
     }).addTo(mymap);
 
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
