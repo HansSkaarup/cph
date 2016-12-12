@@ -128,12 +128,14 @@
     var blackMarker = new L.AwesomeMarkers.icon({
         icon: 'home',
         prefix: 'fa',
-        markerColor: 'black'
+        markerColor: 'black',
+        iconColor: 'black'
     });
     var blueMarker = new L.AwesomeMarkers.icon({
         icon: 'train',
         prefix: 'fa',
-        markerColor: 'blue'
+        markerColor: 'blue',
+        iconColor: 'blue'
     });
 
     //Autocomplete search function
@@ -258,7 +260,7 @@
                 console.log(educationData);
         //Create chart to be displayed in chartContainer
         var chart2 = new CanvasJS.Chart("chartContainer2", {
-            theme: "theme2",
+            theme: "theme6",
             animationEnabled: true,
             width:300,
             title: {
