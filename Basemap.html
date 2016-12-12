@@ -190,6 +190,9 @@ function sqlfunction() {
                 console.log(agedata);
                 //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(data, {
+                    style: function(feature){
+                        return { color: "#ff0000", weight: 1, fillColor: "#ff4444", fillOpacity: .2 }
+                     },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
                     }
