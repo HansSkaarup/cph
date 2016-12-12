@@ -212,15 +212,10 @@ function sqlfunction() {
 
             }),
 
-            $.getJSON('php/nongeo.php?adresse=' + adress, function (data2) {
+            $.getJSON('php/area.php?adresse=' + adress, function (data2) {
 
             nongeo = data2;
-
-            $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function (data2) {
-
-                nongeo = data2;
                 console.log(data2);
-
                 console.log("Succesfull SQL load")
 
             })
@@ -230,7 +225,7 @@ function sqlfunction() {
 function failfunction() {console.log("SQL load failed")}
 
 function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
+document.getElementById("showdata3").innerHTML = ' parks area: ' + nongeo["0"].sqm
 };
 
 
