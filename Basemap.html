@@ -74,16 +74,12 @@
             <p><label for="adgangsadresse-autocomplete"></label></p>
             <input type="text" id="adgangsadresse-autocomplete" style="width: 400px;">
 
-            <button type="button" onclick=sqlfunction()>Go!</button>
+            <button type="button" onclick=sqlfunction()>GO!</button>
 
 
             <p id="showdata"></p>
-
-
             <p class="lorem">This is a web GIS application which uses the address you enter above and analyses it according to various geographic characteristics.</p>
-
             <p class="lorem">In the initial stage, we have decided to use proximity to parks and green spaces as one variable, and the age structure of the city block as another.</p>
-
             <p class="lorem">These two variables represent two different types of data: distance to services (vector) and area characteristics (raster). In the future other datasets will be added to expand the analysis.</p>
 
 
@@ -92,12 +88,14 @@
         <div class="sidebar-pane" id="ageStructure">
             <div id="chartContainer" style="position: absolute; padding-top: 50px"></div>
             <h1 class="sidebar-header">age structure<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
-
+            <p class="lorem" style="font-size:12px; margin-top:450px;">Data sourced from Københavns Kommune GIS department</p>
         </div>
 
         <div class="sidebar-pane" id="parks">
             <h1 class="sidebar-header">green spaces nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             <p id="showdata3"></p>
+
+            <p class="lorem" style="font-size:12px; margin-top:400px;">Data sourced from DAWA & Copenhagen Data</p>
         </div>
         <div class="sidebar-pane" id="transit">
             <h1 class="sidebar-header">transit nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
