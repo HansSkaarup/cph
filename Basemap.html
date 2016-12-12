@@ -74,9 +74,9 @@
             <p><label for="adgangsadresse-autocomplete"></label></p>
             <input type="text" id="adgangsadresse-autocomplete" style="width: 400px;">
 
-            <button type="button" onclick=testfunction()>Show data (temporary)!</button>
+            <button type="button" onclick=sqlfunction()>Go!</button>
 
-            <p class="lorem">DATA</p>
+
             <p id="showdata"></p>
             <p id="showdata2"></p>
 
@@ -109,6 +109,7 @@
 </div>
 
 <!--div element with id where you want your map to be-->
+
 <div id="mapid"></div>
 
 
@@ -119,7 +120,7 @@ var geojsonphp;
 var adress;
 var agedata;
 var rode_nr = 36;
-
+//Test
 //Autocomplete search function
 $('#adgangsadresse-autocomplete').dawaautocomplete({
   baseUrl: 'http://dawa.aws.dk',
@@ -144,7 +145,7 @@ $('#adgangsadresse-autocomplete').dawaautocomplete({
     <!--load a tile layer Mapbox Streets tile layer-->
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18,
+        maxZoom: 20,
         id:'clarineo.23o81n9e',
         accessToken:'pk.eyJ1IjoiY2xhcmluZW8iLCJhIjoiY2l2aDJocjZ0MDA1ajJvb3djeTdidWxyaSJ9.HVE2DplZgfv5T4FSUqah7A'
     }).addTo(mymap);
@@ -164,64 +165,72 @@ runsqlfunction.addEventListener("keydown", function (enter) {
 });
 function validate(enter) {sqlfunction()};
 
-function sqlfunction(){
+//SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
+//when all the $.getJSON's has run.
+function sqlfunction() {
     //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
-$.getJSON('php/Adressgetjson.php?adresse=' + adress, function(msg){
-    console.log(msg);
-        adressedata = msg;
-        //alert(msg);
-	var geojsonphp3 = new L.GeoJSON(msg,{onEachFeature:function( feature, layer ){
-     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
-	  }
-	  }).addTo(mymap);
-    mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
-    updateSocioGraph()
+    $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
+                console.log(msg);
+                adressedata = msg;
+                //alert(msg);
+                var geojsonphp3 = new L.GeoJSON(msg, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
+                    }
+                }).addTo(mymap);
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
 
-    });
 
-    //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
-$.getJSON('php/age.php?adresse=' + adress, function(data) {
+            }),
 
-    agedata = data;
-    console.log(agedata);
-    //alert(msg);
-    var geojsonphp4 = new L.GeoJSON(data, {
-        onEachFeature: function (feature, layer) {
-            layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
-        }
-    }).addTo(mymap);
-})
+            //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+            $.getJSON('php/age.php?adresse=' + adress, function (data) {
 
-$.getJSON('php/park.php?adresse=' + adress, function(park){
+                agedata = data;
+                console.log(agedata);
+                //alert(msg);
+                var geojsonphp4 = new L.GeoJSON(data, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
+                    }
+                }).addTo(mymap);
+            }),
 
-        parkdata = park;
-        console.log(parkdata);
-        //alert(msg);
-	var geojsonphp4 = new L.GeoJSON(park,{onEachFeature:function( feature, layer ){
-     layer.bindPopup( "<strong>" + feature.properties.adresse + "</strong><br/>")
-	  }
-	  }).addTo(mymap);
+            $.getJSON('php/park.php?adresse=' + adress, function (park) {
 
-    })
+                parkdata = park;
+                console.log(parkdata);
+                //alert(msg);
+                var geojsonphp4 = new L.GeoJSON(park, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
+                    }
+                }).addTo(mymap);
 
-$.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function(data2) {
+            }),
 
-    nongeo = data2;
-    console.log(data2);
+            $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function (data2) {
 
-    console.log("Succesfull SQL load")
-})
-}
+                nongeo = data2;
+                console.log(data2);
 
-function testfunction(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+                console.log("Succesfull SQL load")
+
+            })
+    ).then(showdata, failfunction)
+};
+
+function failfunction() {console.log("SQL load failed")}
+
+function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
 document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
-}
+};
 
 
     // Get the socio data from the database
 var socioData;
-function updateSocioGraph(){$.getJSON('socio.php?adresse=' + adress, function(data5) {
-        socioData = data5.data;
+$.getJSON('socio.php?rode_nr=' + rode_nr, function(data5) {
+        socioData = data5.data
     console.log(socioData);
     //Create chart to be displayed in chartContainer
     var chart = new CanvasJS.Chart("chartContainer", {
@@ -239,7 +248,7 @@ function updateSocioGraph(){$.getJSON('socio.php?adresse=' + adress, function(da
             ]
         });
         chart.render();
-})};
+});
 
 
 /*
