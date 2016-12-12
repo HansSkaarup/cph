@@ -42,15 +42,18 @@ if (!$conn) {
 }
 
 # If no input to adress, echo error message. Otherwise continue and set variable adress = input from GET function.
-if (empty($_GET['rode_nr'])) {
+if (empty($_GET['adresse'])) {
     echo "missing required paramater: <i>adresse_input</i>";
     exit;
 } else
-    $rode_nr = $_GET['rode_nr'];
+    $adresse = $_GET['adresse'];
 
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT rode_nr, rodenavn FROM socio_data WHERE rode_nr = " . $rode_nr . "";
+$sql = "SELECT SUM(st_area(park.geom))/1000 as sqm
+FROM park, adresser
+WHERE st_intersects(park.geom, st_buffer(adresser.geom, 500))
+AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";
 
 //$_POST['adresse']
 // . pg_escape_string( $_POST['adresse'] ) .
