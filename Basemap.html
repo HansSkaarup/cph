@@ -205,6 +205,10 @@ $.getJSON('php/park.php?adresse=' + adress, function(park){
 
     })
 
+    $.getJSON('php/nongeo.php?adresse=' + adress, function(data2) {
+
+        nongeo = data2;
+
 $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function(data2) {
 
     nongeo = data2;
@@ -214,9 +218,13 @@ $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function(data2) {
 })
 }
 
+
+
 function testfunction(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
+document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn,
+    document.getElementById("showdata3").innerHTML = 'rode_nr: ' + nongeo["0"].rode_nr + ' rodenavn: ' + nongeo["0"].rodenavn
 }
+
 
 
     // Get the socio data from the database
