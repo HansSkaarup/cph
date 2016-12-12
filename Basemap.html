@@ -128,6 +128,11 @@
         prefix: 'fa',
         markerColor: 'black'
     });
+    var blueMarker = new L.AwesomeMarkers.icon({
+        icon: 'train',
+        prefix: 'fa',
+        markerColor: 'blue'
+    });
 
     //Autocomplete search function
     $('#adgangsadresse-autocomplete').dawaautocomplete({
@@ -228,6 +233,11 @@
                 console.log(traindata);
                 //alert(msg);
                 var geojsonphp5 = new L.GeoJSON(train, {
+                    pointToLayer: function(feature, latlng) {
+                        return L.marker(latlng, {
+                            icon: blueMarker
+                        });
+                    },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.navn + ' ' + feature.properties.objekt_typ + "</strong><br/>")
                     }
