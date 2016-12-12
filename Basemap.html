@@ -179,7 +179,7 @@ function sqlfunction() {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 }).addTo(mymap);
-                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 15, {animation: true});
                 updateSocioData()
 
             }),
@@ -207,7 +207,7 @@ function sqlfunction() {
                 //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(park, {
                     style: function(feature){
-                        return { color: "#009933", weight: 1, fillColor: "#009933", fillOpacity: .1 }
+                        return { color: "#009933", weight: 1, fillColor: "#009933", fillOpacity: .3 }
                     },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
