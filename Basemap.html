@@ -212,6 +212,10 @@ function sqlfunction() {
 
             }),
 
+            $.getJSON('php/nongeo.php?adresse=' + adress, function (data2) {
+
+            nongeo = data2;
+
             $.getJSON('php/nongeo.php?rode_nr=' + rode_nr, function (data2) {
 
                 nongeo = data2;
