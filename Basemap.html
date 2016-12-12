@@ -96,7 +96,7 @@
         </div>
 
         <div class="sidebar-pane" id="parks">
-            <h1 class="sidebar-header">parks in the area<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <h1 class="sidebar-header">green spaces nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             <p id="showdata3"></p>
         </div>
         <div class="sidebar-pane" id="transit">
@@ -179,7 +179,7 @@ function sqlfunction() {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 }).addTo(mymap);
-                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 15, {animation: true});
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 14, {animation: true});
                 updateSocioData()
 
             }),
@@ -192,7 +192,7 @@ function sqlfunction() {
                 //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(data, {
                     style: function(feature){
-                        return { color: "#ff0000", weight: 1, fillColor: "#ff4444", fillOpacity: .2 }
+                        return { color: "#ff0000", weight: 2, fillColor: "#ff4444", fillOpacity: 0 }
                      },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
@@ -229,7 +229,7 @@ function sqlfunction() {
 function failfunction() {console.log("SQL load failed")}
 
 function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-document.getElementById("showdata3").innerHTML = ' parks area: ' + nongeo["0"].sqm
+document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;'
 };
 
 
