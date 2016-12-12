@@ -99,6 +99,10 @@
         </div>
         <div class="sidebar-pane" id="transit">
             <h1 class="sidebar-header">transit nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <p class="lorem">This tab displays information relating to nearby transportation:</p>
+
+            <p id="showdata4"></p>
+
         </div>
 
         <div class="sidebar-pane" id="settings">
@@ -119,6 +123,7 @@ var geojsonphp;
 var adress;
 var agedata;
 var rode_nr = 36;
+var traindata;
 //Test
 //Autocomplete search function
 $('#adgangsadresse-autocomplete').dawaautocomplete({
@@ -211,7 +216,18 @@ function sqlfunction() {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 }).addTo(mymap);
+            }),
 
+            $.getJSON('php/train.php?adresse=' + adress, function (train) {
+
+                traindata = train;
+                console.log(traindata);
+                //alert(msg);
+                var geojsonphp5 = new L.GeoJSON(train, {
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + feature.properties.navn + ' ' + feature.properties.objekt_typ + "</strong><br/>")
+                    }
+                }).addTo(mymap);
             }),
 
             $.getJSON('php/area.php?adresse=' + adress, function (data2) {
@@ -227,7 +243,9 @@ function sqlfunction() {
 function failfunction() {console.log("SQL load failed")}
 
 function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;'
+document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
+document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ
++ ', which lies ' + traindata.features["0"].properties.distancemeter +' metres away.'
 };
 
 
@@ -254,26 +272,6 @@ function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(da
         chart.render();
 })};
 
-
-/*
-    $(function () {
-        var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "theme2",
-            animationEnabled: true,
-            width:300,
-            title: {
-                text: "age groups %"
-            },
-            data: [
-                {
-                    type: "column",
-                    dataPoints: socioData
-                }
-            ]
-        });
-        chart.render();
-    });
-*/
 </script>
 </body>
 </html>
