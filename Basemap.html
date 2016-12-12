@@ -88,6 +88,7 @@
         <div class="sidebar-pane" id="ageStructure">
             <div id="chartContainer" style="position: absolute; padding-top: 50px"></div>
             <h1 class="sidebar-header">age structure<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <div id="chartContainer2" style=" padding-top: 450px"></div>
             <p class="lorem" style="font-size:12px; margin-top:450px;">Data sourced from Københavns Kommune GIS department</p>
         </div>
 
@@ -123,6 +124,7 @@
     var agedata;
     var rode_nr = 36;
     var traindata;
+    var educationData;
     var blackMarker = new L.AwesomeMarkers.icon({
         icon: 'home',
         prefix: 'fa',
@@ -250,7 +252,27 @@
                 console.log(data2);
                 console.log("Succesfull SQL load")
 
-            })
+            }),
+            $.getJSON('php/education.php?adresse=' + adress, function(data6) {
+                educationData = data6.data
+                console.log(educationData);
+        //Create chart to be displayed in chartContainer
+        var chart2 = new CanvasJS.Chart("chartContainer2", {
+            theme: "theme2",
+            animationEnabled: true,
+            width:300,
+            title: {
+                text: "Education groups %"
+            },
+            data: [
+                {
+                    type: "column",
+                    dataPoints: educationData
+                }
+            ]
+        });
+        chart2.render();
+      })
         ).then(showdata, failfunction)
     };
 
