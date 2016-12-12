@@ -47,7 +47,7 @@ FROM socio_data, adresser WHERE st_intersects(adresser.geom, socio_data.geom)
 AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";
 
 
-//echo $sql;
+echo $sql;
 
 # Try query or error
 $rs = pg_query($conn, $sql);
