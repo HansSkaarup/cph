@@ -179,7 +179,7 @@ function sqlfunction() {
                     }
                 }).addTo(mymap);
                 mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"]), 14, {animation: true});
-
+                updateSocioData()
 
             }),
 
@@ -229,7 +229,7 @@ document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_
 
     // Get the socio data from the database
 var socioData;
-$.getJSON('socio.php?adresse=' + adress, function(data5) {
+function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(data5) {
         socioData = data5.data
     console.log(socioData);
     //Create chart to be displayed in chartContainer
@@ -248,7 +248,7 @@ $.getJSON('socio.php?adresse=' + adress, function(data5) {
             ]
         });
         chart.render();
-});
+})};
 
 
 /*
