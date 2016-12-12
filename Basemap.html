@@ -229,7 +229,7 @@ document.getElementById("showdata2").innerHTML = 'rode_nr: ' + nongeo["0"].rode_
 
     // Get the socio data from the database
 var socioData;
-$.getJSON('socio.php?rode_nr=' + rode_nr, function(data5) {
+$.getJSON('socio.php?adresse=' + adress, function(data5) {
         socioData = data5.data
     console.log(socioData);
     //Create chart to be displayed in chartContainer
