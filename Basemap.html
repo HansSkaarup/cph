@@ -7,10 +7,13 @@
     <!--Leaflet-->
     <!--include leaflet CSS-->
     <link rel="stylesheet" href="lib/leaflet/leaflet.css"/>
-	<script src="jquery/jquery-3.1.1.min.js"></script>
+    <script src="jquery/jquery-3.1.1.min.js"></script>
     <!--include leaflet javascript file-->
     <script src="lib/leaflet/leaflet.js"></script>
-	<script>// type="text/javascript" src="dist/leaflet.ajax.js"></script>
+    <script>// type="text/javascript" src="dist/leaflet.ajax.js"></script>
+    <!--include awesome markers-->
+    <link rel="stylesheet" href="lib/Awesome-markers/dist/leaflet.awesome-markers.css">
+    <script src="lib/Awesome-markers/dist/leaflet.awesome-markers.js"></script>
     <!--include sidebar files-->
     <script src="https://use.fontawesome.com/fea527cdc3.js"></script>
     <link rel="stylesheet" href="lib/sidebar-v2-master/css/leaflet-sidebar.css" />
@@ -24,7 +27,7 @@
     <script src="lib/canvasjs.min.js"></script>
     <!--include geoJson file-->
     <style type="text/css">
-    <!--to get a full screen map-->
+        <!--to get a full screen map-->
         body {
             padding: 0;
             margin: 0;
@@ -113,30 +116,30 @@
 
 
 <script>
-var nongeo;
-var adressedata;
-var geojsonphp;
-var adress;
-var agedata;
-var rode_nr = 36;
-var traindata;
+    var nongeo;
+    var adressedata;
+    var geojsonphp;
+    var adress;
+    var agedata;
+    var rode_nr = 36;
+    var traindata;
 
-//Autocomplete search function
-$('#adgangsadresse-autocomplete').dawaautocomplete({
-  baseUrl: 'http://dawa.aws.dk',
-  minLength: 2,
-  adgangsadresserOnly: true,
-  params: {kommunekode: 101},
-  select: function(event, input) {
-      adress = input.tekst;
-      console.log(input);
+    //Autocomplete search function
+    $('#adgangsadresse-autocomplete').dawaautocomplete({
+        baseUrl: 'http://dawa.aws.dk',
+        minLength: 2,
+        adgangsadresserOnly: true,
+        params: {kommunekode: 101},
+        select: function(event, input) {
+            adress = input.tekst;
+            console.log(input);
 
-    // denne funktion bliver kaldt når brugeren vælger en adresse.
-  },
-  error: function(xhr, status, error) {
-    // denne funktion bliver kaldt ved fejl
-  }
-});
+            // denne funktion bliver kaldt når brugeren vælger en adresse.
+        },
+        error: function(xhr, status, error) {
+            // denne funktion bliver kaldt ved fejl
+        }
+    });
 
 
     //		<!--initialize the map and set its view to chosen geographical coordinates and zoom level-->
@@ -152,19 +155,22 @@ $('#adgangsadresse-autocomplete').dawaautocomplete({
 
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
 
-var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
-runsqlfunction.addEventListener("keydown", function (enter) {
-    if (enter.keyCode === 13) {
-        validate(enter);
-    }
-});
-function validate(enter) {sqlfunction()};
 
-//SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
-//when all the $.getJSON's has run.
-function sqlfunction() {
-    //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
-    $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
+
+
+    var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
+    runsqlfunction.addEventListener("keydown", function (enter) {
+        if (enter.keyCode === 13) {
+            validate(enter);
+        }
+    });
+    function validate(enter) {sqlfunction()};
+
+    //SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
+    //when all the $.getJSON's has run.
+    function sqlfunction() {
+        //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+        $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
                 console.log(msg);
                 adressedata = msg;
                 //alert(msg);
@@ -187,7 +193,7 @@ function sqlfunction() {
                 var geojsonphp4 = new L.GeoJSON(data, {
                     style: function(feature){
                         return { color: "#ff0000", weight: 2, fillColor: "#ff4444", fillOpacity: 0 }
-                     },
+                    },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
                     }
@@ -223,33 +229,33 @@ function sqlfunction() {
 
             $.getJSON('php/area.php?adresse=' + adress, function (data2) {
 
-            nongeo = data2;
+                nongeo = data2;
                 console.log(data2);
                 console.log("Succesfull SQL load")
 
             })
-    ).then(showdata, failfunction)
-};
+        ).then(showdata, failfunction)
+    };
 
-function failfunction() {console.log("SQL load failed")}
+    function failfunction() {console.log("SQL load failed")}
 
-//Display information function (getElementByID is a test function that displays the chosen address on tab 1)
-function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+    //Display information function (getElementByID is a test function that displays the chosen address on tab 1)
+    function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
         //Display information relating to parks
-document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
+        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
         //Display Information relating to public transportation.
-document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
-document.getElementById("showdata5").innerHTML = 'Distance: ' + traindata.features["0"].properties.distancemeter +' metres.'
-};
+        document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
+        document.getElementById("showdata5").innerHTML = 'Distance: ' + traindata.features["0"].properties.distancemeter +' metres.'
+    };
 
 
     // Get the socio data from the database
-var socioData;
-function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(data5) {
+    var socioData;
+    function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(data5) {
         socioData = data5.data
-    console.log(socioData);
-    //Create chart to be displayed in chartContainer
-    var chart = new CanvasJS.Chart("chartContainer", {
+        console.log(socioData);
+        //Create chart to be displayed in chartContainer
+        var chart = new CanvasJS.Chart("chartContainer", {
             theme: "theme2",
             animationEnabled: true,
             width:300,
@@ -264,7 +270,7 @@ function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(da
             ]
         });
         chart.render();
-})};
+    })};
 
 </script>
 </body>
