@@ -206,6 +206,9 @@ function sqlfunction() {
                 console.log(parkdata);
                 //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(park, {
+                    style: function(feature){
+                        return { color: "#009933", weight: 1, fillColor: "#009933", fillOpacity: .1 }
+                    },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
