@@ -123,6 +123,11 @@
     var agedata;
     var rode_nr = 36;
     var traindata;
+    var blackMarker = new L.AwesomeMarkers.icon({
+        icon: 'home',
+        prefix: 'fa',
+        markerColor: 'black'
+    });
 
     //Autocomplete search function
     $('#adgangsadresse-autocomplete').dawaautocomplete({
@@ -155,9 +160,6 @@
 
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
 
-
-
-
     var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
     runsqlfunction.addEventListener("keydown", function (enter) {
         if (enter.keyCode === 13) {
@@ -175,6 +177,11 @@
                 adressedata = msg;
                 //alert(msg);
                 var geojsonphp3 = new L.GeoJSON(msg, {
+                    pointToLayer: function(feature, latlng) {
+                      return L.marker(latlng, {
+                          icon: blackMarker
+                      });
+                    },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
