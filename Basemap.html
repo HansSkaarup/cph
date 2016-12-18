@@ -117,6 +117,9 @@
 
 
 <script>
+
+    var pgroutingdata;
+    var coordinates;
     var nongeo;
     var adressedata;
     var geojsonphp;
@@ -136,28 +139,10 @@
         markerColor: 'blue',
     });
 
-    //Autocomplete search function
-    $('#adgangsadresse-autocomplete').dawaautocomplete({
-        baseUrl: 'http://dawa.aws.dk',
-        minLength: 2,
-        adgangsadresserOnly: true,
-        params: {kommunekode: 101},
-        select: function(event, input) {
-            adress = input.tekst;
-            console.log(input);
-
-            // denne funktion bliver kaldt når brugeren vælger en adresse.
-        },
-        error: function(xhr, status, error) {
-            // denne funktion bliver kaldt ved fejl
-        }
-    });
-
-
-    //		<!--initialize the map and set its view to chosen geographical coordinates and zoom level-->
+    //initialize the map and set its view to chosen geographical coordinates and zoom level
     var mymap = L.map('mapid').setView([55.676, 12.568], 12);
 
-    <!--load a tile layer Mapbox Streets tile layer-->
+    //load a tile layer Mapbox Streets tile layer
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 20,
@@ -167,6 +152,24 @@
 
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
 
+        //Autocomplete search function
+    $('#adgangsadresse-autocomplete').dawaautocomplete({
+        baseUrl: 'http://dawa.aws.dk',
+        minLength: 1,
+        adgangsadresserOnly: true,
+        params: {kommunekode: 101},
+        // This function is called when the user chooses an address.
+        select: function(event, input) {
+            adress = input.tekst;
+            console.log(input);
+
+        },
+        // This function is called upon if an error occurs: NOTE, NO FUNCTION AT THE MOMENT!
+        error: function(xhr, status, error) {
+
+        }
+    });
+        //This function runs the "sqlfunction" below if a user presses Enter, and only the enter button, in the address input box.
     var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
     runsqlfunction.addEventListener("keydown", function (enter) {
         if (enter.keyCode === 13) {
@@ -175,10 +178,11 @@
     });
     function validate(enter) {sqlfunction()};
 
-    //SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
-    //when all the $.getJSON's has run.
+    // SQL function that runs all the $.getJSON functions inside it and a $.when that executes the function that
+    // shows data when all the $.getJSON's has run successfully. This also helps create a sequence in which the javascript runs.
     function sqlfunction() {
-        //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+        // getJSON function that communicates with the PHP file(s) we created
+        // And "adress" being the variable (street name, house number, postal code and postal name) for the SQL that gets sent to the the PHP document we call.
         $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
                 console.log(msg);
                 adressedata = msg;
@@ -193,12 +197,12 @@
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 }).addTo(mymap);
-                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 14, {animation: true});
-                updateSocioData()
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"],
+                        msg.features["0"].geometry.coordinates["0"] +0.01), 14, {animation: true});
 
             }),
 
-            //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
+            //get the name and geometry of the rode that intersects with the address chosen.
             $.getJSON('php/age.php?adresse=' + adress, function (data) {
 
                 agedata = data;
@@ -213,7 +217,7 @@
                     }
                 }).addTo(mymap);
             }),
-
+            //Get the geometry of parks within a 500m radius.
             $.getJSON('php/park.php?adresse=' + adress, function (park) {
 
                 parkdata = park;
@@ -229,11 +233,11 @@
                 }).addTo(mymap);
             }),
 
+            //Get and display the nearest train station + related data.
             $.getJSON('php/train.php?adresse=' + adress, function (train) {
 
                 traindata = train;
                 console.log(traindata);
-                //alert(msg);
                 var geojsonphp5 = new L.GeoJSON(train, {
                     pointToLayer: function(feature, latlng) {
                         return L.marker(latlng, {
@@ -245,71 +249,116 @@
                     }
                 }).addTo(mymap);
             }),
-
+             //get the non_geometry data on square meter of park within a radius of 500m.
             $.getJSON('php/area.php?adresse=' + adress, function (data2) {
 
                 nongeo = data2;
                 console.log(data2);
-                console.log("Succesfull SQL load")
+
 
             }),
+           // Get the education data from the database for the chart
             $.getJSON('php/education.php?adresse=' + adress, function(data6) {
-                educationData = data6.data
+                educationData = data6.data;
                 console.log(educationData);
-        //Create chart to be displayed in chartContainer
-        var chart2 = new CanvasJS.Chart("chartContainer2", {
-            theme: "theme6",
-            animationEnabled: true,
-            width:300,
-            title: {
-                text: "Education groups %"
-            },
-            data: [
-                {
+                //Create chart to be displayed in chartContainer2
+            var chart2 = new CanvasJS.Chart("chartContainer2", {
+                theme: "theme6",
+                animationEnabled: true,
+                width:300,
+                title: {
+                    text: "Education groups %"
+                    },
+                data: [{
                     type: "column",
                     dataPoints: educationData
-                }
-            ]
+                    }]
         });
         chart2.render();
-      })
-        ).then(showdata, failfunction)
-    };
 
-    function failfunction() {console.log("SQL load failed")}
+      }),
 
-    //Display information function (getElementByID is a test function that displays the chosen address on tab 1)
-    function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-        //Display information relating to parks
-        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
-        //Display Information relating to public transportation.
-        document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
-        document.getElementById("showdata5").innerHTML = 'Distance: ' + traindata.features["0"].properties.distancemeter +' metres.'
-    };
-
-
-    // Get the socio data from the database
-    var socioData;
-    function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(data5) {
-        socioData = data5.data
-        console.log(socioData);
-        //Create chart to be displayed in chartContainer
-        var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "theme2",
-            animationEnabled: true,
-            width:300,
-            title: {
-                text: "age groups %"
-            },
-            data: [
-                {
+        // Get the age data from the database for the chart
+            $.getJSON('socio.php?adresse=' + adress, function(data5) {
+                socioData = data5.data
+                console.log(socioData);
+                //Create chart to be displayed in chartContainer
+            var chart = new CanvasJS.Chart("chartContainer", {
+                theme: "theme2",
+                animationEnabled: true,
+                width:300,
+                title: {
+                    text: "age groups %"
+                    },
+                data: [{
                     type: "column",
                     dataPoints: socioData
-                }
-            ]
+                    }]
         });
         chart.render();
-    })};
+      })
+
+    ).then(showdata, failfunction)
+
+  };
+
+    function failfunction() {console.log(".Then function/SQL load failed")}
+
+    //Display information function that shows data in the HTML sidebar using the document.getElementByID and a new jquery .when function..
+    function showdata(){$.when(
+        console.log(".Then function launched/Succesfull SQL load"),
+        document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+        //Display information relating to parks
+        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
+        //Display name and type of train station/metro - possible future things relating to public transportation.
+        document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
+
+        //Gathers the needed coordinates for pg_routing in a variable so it can be send to a PHP script.
+        coordinates = adressedata.features["0"].geometry.coordinates["0"] + ',' +
+                        adressedata.features["0"].geometry.coordinates["1"] + ',' +
+                        traindata.features["0"].geometry.coordinates["0"],
+        console.log(coordinates)
+
+      //.then function that runs either "pgrouting" on success or "failpgrouting" if the function showdata does not run properly
+    ).then(pgrouting, failpgrouting)
+
+    };
+
+    function failpgrouting() {console.log(".Then function/Showsdata failed")}
+
+    //Runs the PG_routing (pgr_fromAtoB), by sending the coordinates to the pgrouting.php script.
+    function pgrouting() {
+            console.log("Pgrouting function launched"),
+            $.getJSON('php/pgrouting.php?coordinates=' + coordinates, function (data7) {
+            pgroutingdata = data7;
+            console.log(data7);
+
+            //Iteration function that summarizes the length values of the returned ways by parsing them to floats (send
+            // as strings by the php script) and adding them together into the sumdistance variable.
+            var sumdistance = 0,
+            features = pgroutingdata.features,
+            i;
+            for (i = 0; i < features.length; i++) { //loop through array
+            sumdistance += parseFloat(features[i].properties.cost);
+            }
+            //Display result of iterating function to sidebar using Math.round to remove comma values and make it readable.
+            document.getElementById("showdata5").innerHTML = 'Distance: ' + Math.round(sumdistance) +' metres.';
+            console.log(sumdistance);
+
+                //Display pg_routing result to map.
+                var pgrouting2leaflet = new L.GeoJSON(data7, {
+                    style: function(feature){
+                        return { color: "#000000", weight: 1, fillColor: "#009933", fillOpacity: .3 }
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + data7.features["0"].properties.name + "</strong><br/>")
+                    }
+                }).addTo(mymap);
+
+        }
+    )};
+
+
 
 </script>
 </body>
