@@ -359,7 +359,7 @@
                 //Display pg_routing result to map.
                 var pgrouting2leaflet = new L.GeoJSON(data7, {
                     style: function(feature){
-                        return { color: "#000000", weight: 1, fillColor: "#009933", fillOpacity: .3 }
+                        return { color: "#000000", dashArray: "1 6", weight: 4, Opacity: .3}
                     },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + data7.features["0"].properties.name + "</strong><br/>")
