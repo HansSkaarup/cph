@@ -134,7 +134,7 @@
     var rode_nr = 36;
     var traindata;
     var educationData;
-    var blackMarker = new L.AwesomeMarkers.icon({
+    var redMarker = new L.AwesomeMarkers.icon({
         icon: 'home',
         prefix: 'fa',
         markerColor: '#e01e04'
@@ -142,7 +142,7 @@
     var blueMarker = new L.AwesomeMarkers.icon({
         icon: 'train',
         prefix: 'fa',
-        markerColor: 'darkblue',
+        markerColor: 'darkblue'
     });
 
     //initialize the map and set its view to chosen geographical coordinates and zoom level
@@ -198,7 +198,7 @@
                 var geojsonphp3 = new L.GeoJSON(msg, {
                     pointToLayer: function(feature, latlng) {
                       return L.marker(latlng, {
-                          icon: blackMarker
+                          icon: redMarker
                       });
                     },
                     onEachFeature: function (feature, layer) {
@@ -206,7 +206,7 @@
                     }
                 });
                 layerGroup.addLayer(geojsonphp3);
-                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 14, {animation: true});
+                mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 15, {animation: true});
 
 
             }),
@@ -356,7 +356,7 @@
                 //Display pg_routing result to map.
                 var pgrouting2leaflet = new L.GeoJSON(data7, {
                     style: function(feature){
-                        return { color: "#000000", dashArray: "1 6", weight: 4, Opacity: .3}
+                        return { color: "#223b84", dashArray: "1 7", weight: 6}
                     },
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + "Road to the nearest train station" + "</strong><br/>")
