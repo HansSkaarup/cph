@@ -188,14 +188,13 @@
     //SQL funcion that runs the all the $.getJSON functions inside a $.when that executes the function that shows the data
     //when all the $.getJSON's has run.
     function sqlfunction() {
+        //Refreshes/Clears the search shown on the map.
         layerGroup.clearLayers();
-        //getJSON - adress being the variable for thr SQL that gets inserted in the PHP document we call.
         // getJSON function that communicates with the PHP file(s) we created
         // And "adress" being the variable (street name, house number, postal code and postal name) for the SQL that gets sent to the the PHP document we call.
         $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
                 console.log(msg);
                 adressedata = msg;
-                //alert(msg);
                 var geojsonphp3 = new L.GeoJSON(msg, {
                     pointToLayer: function(feature, latlng) {
                       return L.marker(latlng, {
@@ -217,7 +216,6 @@
 
                 agedata = data;
                 console.log(agedata);
-                //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(data, {
                     style: function(feature){
                         return { color: "#ff0000", weight: 2, fillColor: "#ff4444", fillOpacity: 0 }
@@ -234,7 +232,6 @@
 
                 parkdata = park;
                 console.log(parkdata);
-                //alert(msg);
                 var geojsonphp4 = new L.GeoJSON(park, {
                     style: function(feature){
                         return { color: "#009933", weight: 1, fillColor: "#009933", fillOpacity: .3 }
@@ -264,7 +261,7 @@
                 });
                 layerGroup.addLayer(geojsonphp5);
             }),
-
+             //get the non_geometry data on square meter of park within a radius of 500m.
             $.getJSON('php/area.php?adresse=' + adress, function (data2) {
 
                 nongeo = data2;
