@@ -91,6 +91,7 @@
 
 
             <p id="showdata"></p>
+            <p id="showdata6"></p>
             <p class="lorem">This is a web GIS application which uses the address you enter above and analyses it according to various geographic characteristics.</p>
             <p class="lorem">In the initial stage, we use proximity to parks and green spaces as one variable, the age structure of the city block as another, and the nearest train station as the third.</p>
             <p class="lorem">These variables represent three different types of data: distance to amenities (vector polygons), area characteristics (raster) and nearest station (vector point).</p>
@@ -329,6 +330,8 @@
         document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
 
 
+
+
         //Gathers the needed coordinates for pg_routing in a variable so it can be send to a PHP script.
         coordinates = adressedata.features["0"].geometry.coordinates["0"] + ',' +
                         adressedata.features["0"].geometry.coordinates["1"] + ',' +
@@ -337,6 +340,8 @@
 
       //.then function that runs either "pgrouting" on success or "failpgrouting" if the function showdata does not run properly
     ).then(pgrouting, failpgrouting)
+
+
 
     };
 
@@ -371,9 +376,18 @@
                     }
                 })
                 layerGroup.addLayer(pgrouting2leaflet);
-
+                var trainRating = sumdistance;
+                var rating;
+                if (trainRating < 500){
+                    rating = 2;
+                } else if (trainRating > 500 && trainRating < 1000){
+                    rating = 1;
+                } else rating = 0;
+                console.log(rating);
+                document.getElementById("showdata6").innerHTML = rating + ' out of 2 stars.';
         }
     )};
+
 
 
 
