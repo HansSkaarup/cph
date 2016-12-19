@@ -202,7 +202,7 @@
                 });
                 layerGroup.addLayer(geojsonphp3);
                 mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 14, {animation: true});
-                updateSocioData()
+
 
             }),
 
@@ -263,14 +263,13 @@
 
                 nongeo = data2;
                 console.log(data2);
-                console.log("Succesfull SQL load")
 
             }),
            // Get the education data from the database for the chart
             $.getJSON('php/education.php?adresse=' + adress, function(data6) {
-                educationData = data6.data
+                educationData = data6.data;
                 console.log(educationData);
-        //Create chart to be displayed in chartContainer
+        //Create chart to be displayed in chartContainer2
         var chart2 = new CanvasJS.Chart("chartContainer2", {
             theme: "theme6",
             animationEnabled: true,
@@ -278,52 +277,35 @@
             title: {
                 text: "Education groups %"
             },
-            data: [
-                {
+            data: [{
                     type: "column",
                     dataPoints: educationData
-                }
-            ]
+                }]
         });
         chart2.render();
-      })
-        ).then(showdata, failfunction)
-    };
+      }),
 
-    function failfunction() {console.log("SQL load failed")}
-
-    //Display information function (getElementByID is a test function that displays the chosen address on tab 1)
-    function showdata(){document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
-        //Display information relating to parks
-        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
-        //Display Information relating to public transportation.
-        document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
-        document.getElementById("showdata5").innerHTML = 'Distance: ' + traindata.features["0"].properties.distancemeter +' metres.'
-    };
-
-
-    // Get the socio data from the database
-    var socioData;
-    function updateSocioData() {$.getJSON('socio.php?adresse=' + adress, function(data5) {
-        socioData = data5.data
-        console.log(socioData);
-        //Create chart to be displayed in chartContainer
-        var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "theme2",
-            animationEnabled: true,
-            width:300,
-            title: {
-                text: "age groups %"
-            },
-            data: [
-                {
+        // Get the age data from the database for the chart
+            $.getJSON('socio.php?adresse=' + adress, function(data5) {
+                socioData = data5.data;
+                console.log(socioData);
+                //Create chart to be displayed in chartContainer
+            var chart = new CanvasJS.Chart("chartContainer", {
+                theme: "theme2",
+                animationEnabled: true,
+                width:300,
+                title: {
+                    text: "age groups %"
+                    },
+                data: [{
                     type: "column",
                     dataPoints: socioData
-                }
-            ]
+                    }]
         });
         chart.render();
-      }).then(showdata, failfunction)
+      })
+
+    ).then(showdata, failfunction)
 
   };
 
