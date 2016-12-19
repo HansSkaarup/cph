@@ -50,7 +50,7 @@ if (empty($_GET['adresse'])) {
 
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT ROUND(SUM(st_area(park.geom))) as sqm
+$sql = "SELECT ROUND(SUM(st_area(park.geom))/10000) as ha
 FROM park, adresser
 WHERE st_intersects(park.geom, st_buffer(adresser.geom, 500))
 AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";

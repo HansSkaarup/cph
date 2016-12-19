@@ -323,9 +323,9 @@
     //Display information function that shows data in the HTML sidebar using the document.getElementByID and a new jquery .when function..
     function showdata(){$.when(
         console.log(".Then function launched/Succesfull SQL load"),
-        document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse,
+        document.getElementById("showdata").innerHTML = adressedata.features["0"].properties.adresse + ' rates:',
         //Display information relating to parks
-        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].sqm + ' &#13217;',
+        document.getElementById("showdata3").innerHTML = 'area of parkland within 500m: ' + nongeo["0"].ha + ' hectares',
         //Display name and type of train station/metro - possible future things relating to public transportation.
         document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
 
@@ -376,15 +376,27 @@
                     }
                 })
                 layerGroup.addLayer(pgrouting2leaflet);
-                var trainRating = sumdistance;
-                var rating;
-                if (trainRating < 500){
-                    rating = 2;
-                } else if (trainRating > 500 && trainRating < 1000){
-                    rating = 1;
-                } else rating = 0;
-                console.log(rating);
-                document.getElementById("showdata6").innerHTML = rating + ' out of 2 stars.';
+
+                var trainDistance = sumdistance;
+                var trainRating;
+                if (trainDistance < 500){
+                    trainRating = 2;
+                } else if (trainDistance > 500 && trainDistance < 1000){
+                    trainRating = 1;
+                } else trainRating = 0;
+                console.log(trainRating);
+                //document.getElementById("showdata6").innerHTML = trainRating + ' out of 2';
+
+                var parkArea = nongeo["0"].ha;
+                var parkRating;
+                if (parkArea >= 5) {
+                    parkRating = 2;
+                } else if (parkArea < 5 && parkArea >= 1) {
+                    parkRating = 1;
+                } else parkRating = 0;
+                console.log(parkRating);
+
+                document.getElementById("showdata6").innerHTML = parkRating + trainRating + ' out of 4';
         }
     )};
 
