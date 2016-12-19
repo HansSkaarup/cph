@@ -361,7 +361,8 @@
                     onEachFeature: function (feature, layer) {
                         layer.bindPopup("<strong>" + data7.features["0"].properties.name + "</strong><br/>")
                     }
-                }).addTo(mymap);
+                })
+                layerGroup.addLayer(pgrouting2leaflet);
 
         }
     )};
