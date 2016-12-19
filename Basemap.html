@@ -235,9 +235,6 @@
                 var geojsonphp4 = new L.GeoJSON(park, {
                     style: function(feature){
                         return { color: "#009933", weight: 1, fillColor: "#009933", fillOpacity: .3 }
-                    },
-                    onEachFeature: function (feature, layer) {
-                        layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 });
         layerGroup.addLayer(geojsonphp4);
@@ -362,7 +359,7 @@
                         return { color: "#000000", dashArray: "1 6", weight: 4, Opacity: .3}
                     },
                     onEachFeature: function (feature, layer) {
-                        layer.bindPopup("<strong>" + data7.features["0"].properties.name + "</strong><br/>")
+                        layer.bindPopup("<strong>" + "Road to the nearest train station" + "</strong><br/>")
                     }
                 })
                 layerGroup.addLayer(pgrouting2leaflet);
