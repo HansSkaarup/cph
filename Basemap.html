@@ -221,7 +221,7 @@
                         return { color: "#ff0000", weight: 2, fillColor: "#ff4444", fillOpacity: 0 }
                     },
                     onEachFeature: function (feature, layer) {
-                        layer.bindPopup("<strong>" + feature.properties.rodenavn + "</strong><br/>")
+                        layer.bindPopup("<strong>" + feature.properties.rodenavn + " rode" + "</strong><br/>")
                     }
                 });
                 layerGroup.addLayer(geojsonphp4);
