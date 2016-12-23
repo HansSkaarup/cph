@@ -46,9 +46,9 @@ if (empty($_GET['adresse'])) {
     $adresse = $_GET['adresse'];
 
 # Build SQL SELECT statement and return the geometry as a GeoJSON element in EPSG: 4326
-$sql = "SELECT ROUND(ST_distance(adresser.geom, train.geom)) as distanceMeter, train.objekt_typ, train.navn, st_asgeojson(st_transform(train.geom, 4326)) AS geojson
-FROM train, adresser WHERE (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) =
- '" . $adresse . "' order by distanceMeter ASC limit 1";
+$sql = "SELECT DISTINCT socio_data.rodenavn AS rode, st_asgeojson(st_transform(socio_data.geom, 4326)) AS geojson
+FROM park, socio_data, train WHERE ST_Dwithin(socio_data.geom, park.geom, 500)
+AND ST_Dwithin(socio_data.geom, train.geom, 500)";
 
 
 //echo $sql;
