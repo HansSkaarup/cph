@@ -26,6 +26,7 @@
     <!---graph-->
     <script src="lib/canvasjs.min.js"></script>
     <!--include geoJson file-->
+    <script src="lib/heatmap.geojson"></script>
     <style type="text/css">
         <!--to get a full screen map-->
         body {
@@ -47,9 +48,9 @@
         .sidebar-tabs > li.active, .sidebar-tabs > ul > li.active {
         background-color: #e68a00; }
 
-
-
-
+        .leaflet-control-layers-toggle {
+            width: auto;
+        }
 
         .ui-front {z-index: 9999999 !important;  }
 
@@ -65,6 +66,7 @@
             <li><a href="#ageStructure" role="tab"><i class="fa fa-bar-chart"></i></a></li>
             <li><a href="#parks" role="tab"><i class="fa fa-leaf"></i></a></li>
             <li><a href="#transit" role="tab"><i class="fa fa-train"></i></a></li>
+            <li><a href="#heatmap" role="tab"><i class="fa fa-map-o"></i></a></li>
             <li><a href="https://github.com/hansskaarup/cph" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
         </ul>
 
@@ -119,6 +121,7 @@
             <p id="showdata5"></p>
 
         </div>
+        <div class="sidebar-pane" id="heatmap">heatmap</div>
 
         <div class="sidebar-pane" id="settings">
             <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
@@ -155,7 +158,8 @@
     });
 
     //initialize the map and set its view to chosen geographical coordinates and zoom level
-    var mymap = L.map('mapid').setView([55.676, 12.568], 12);
+    var mymap = L.map('mapid').setView([55.676, 12.568],12);
+
     var layerGroup = L.layerGroup(); //adds markers and geojson datapoints to a group
     layerGroup.addTo(mymap); //
     //load a tile layer Mapbox Streets tile layer
@@ -167,6 +171,23 @@
     }).addTo(mymap);
 
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
+
+    var heatmapLayer = new L.layerGroup(); //adds geojson layer
+    var heatmapStyle = {
+        color: "#971bf7",
+        fillColor: "#971bf7",
+        fillOpacity: 0.4
+    };
+    var heatmap = new L.geoJson(heatmapData, {
+        style: heatmapStyle
+    }).addTo(heatmapLayer);
+
+    var overlay = {
+        "heatmap":heatmap
+
+    };
+
+    L.control.layers(null, overlay, {position: 'bottomleft'}).addTo(mymap);
 
         //Autocomplete search function
     $('#adgangsadresse-autocomplete').dawaautocomplete({
@@ -214,6 +235,7 @@
                         layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
                     }
                 });
+
                 layerGroup.addLayer(geojsonphp3);
                 mymap.setView(new L.LatLng(msg.features["0"].geometry.coordinates["1"], msg.features["0"].geometry.coordinates["0"] +0.01), 15, {animation: true});
 
