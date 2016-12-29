@@ -136,16 +136,17 @@
 
 <script>
 
+    //Global Variables created for later use in functions.
     var pgroutingdata;
     var coordinates;
     var nongeo;
     var adressedata;
-    var geojsonphp;
     var adress;
     var agedata;
-    var rode_nr = 36;
     var traindata;
     var educationData;
+
+    //Variables containing custom markers based on the "AwesomeMarkers" library.
     var redMarker = new L.AwesomeMarkers.icon({
         icon: 'home',
         prefix: 'fa',
@@ -160,8 +161,9 @@
     //initialize the map and set its view to chosen geographical coordinates and zoom level
     var mymap = L.map('mapid').setView([55.676, 12.568],12);
 
-    var layerGroup = L.layerGroup(); //adds markers and geojson datapoints to a group
-    layerGroup.addTo(mymap); //
+    //adds markers and geojson datapoints to a group - used for refreshing/clearing already loaded data
+    var layerGroup = L.layerGroup();
+    layerGroup.addTo(mymap);
     //load a tile layer Mapbox Streets tile layer
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
@@ -170,14 +172,17 @@
         accessToken:'pk.eyJ1IjoiY2xhcmluZW8iLCJhIjoiY2l2aDJocjZ0MDA1ajJvb3djeTdidWxyaSJ9.HVE2DplZgfv5T4FSUqah7A'
     }).addTo(mymap);
 
+    //Sidebar creation and settings.
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
 
+    //imports the geojson file to a layergroup. The heatmap settings is still under construction.
     var heatmapLayer = new L.layerGroup(); //adds geojson layer
     var heatmapStyle = {
         color: "#971bf7",
         fillColor: "#971bf7",
         fillOpacity: 0.4
     };
+    //Set heatmap to style and layer settings so that it overlays the basemap.
     var heatmap = new L.geoJson(heatmapData, {
         style: heatmapStyle
     }).addTo(heatmapLayer);
@@ -186,7 +191,7 @@
         "heatmap":heatmap
 
     };
-
+    //Layercontrol creation and position in the bottomleft corner. This controls the heatmap layer visibility.
     L.control.layers(null, overlay, {position: 'bottomleft'}).addTo(mymap);
 
         //Autocomplete search function
