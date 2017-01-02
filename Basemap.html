@@ -141,7 +141,7 @@
     var nongeo;
     var adressedata;
     var adress;
-    var agedata;
+    var rodedata;
     var traindata;
     var educationData;
 
@@ -247,10 +247,10 @@
             }),
 
             //get the name and geometry of the rode that intersects with the address chosen.
-            $.getJSON('php/age.php?adresse=' + adress, function (data) {
+            $.getJSON('php/rode.php?adresse=' + adress, function (data) {
 
-                agedata = data;
-                console.log(agedata);
+                rodedata = data;
+                console.log(rodedata);
                 var geojsonphp4 = new L.GeoJSON(data, {
                     style: function(feature){
                         return { color: "#ff0000", weight: 2, fillColor: "#ff4444", fillOpacity: 0 }
