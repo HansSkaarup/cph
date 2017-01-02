@@ -1,31 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: georgina scholes
- * Date: 12/12/2016
- * Time: 12:27 PM
- */
 
-//
-/*echo '<pre>';
-print_r($_POST);
-die;
-*/
-/**
- * PostGIS to GeoJSON
- * Query a PostGIS table or view and return the results in GeoJSON format, suitable for use in OpenLayers, Leaflet, etc.
- *
- * @param 		string		$geotable		The PostGIS layer name *REQUIRED*
- * @param 		string		$geomfield		The PostGIS geometry field *REQUIRED*
- * @param 		string		$srid			The SRID of the returned GeoJSON *OPTIONAL (If omitted, EPSG: 4326 will be used)*
- * @param 		string 		$fields 		Fields to be returned *OPTIONAL (If omitted, all fields will be returned)* NOTE- Uppercase field names should be wrapped in double quotes
- * @param 		string		$parameters		SQL WHERE clause parameters *OPTIONAL*
- * @param 		string		$orderby		SQL ORDER BY constraint *OPTIONAL*
- * @param 		string		$sort			SQL ORDER BY sort order (ASC or DESC) *OPTIONAL*
- * @param 		string		$limit			Limit number of results returned *OPTIONAL*
- * @param 		string		$offset			Offset used in conjunction with limit *OPTIONAL*
- * @return 		string					resulting geojson string
- */
 function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f formfeed)
     $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
     $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
@@ -55,11 +29,6 @@ FROM park, adresser
 WHERE st_intersects(park.geom, st_buffer(adresser.geom, 500))
 AND (adresser.vejnavn || ' ' || adresser.husnr || ', ' || adresser.postnr || ' ' || adresser.postnrnavn) = '" . $adresse . "' ";
 
-//$_POST['adresse']
-// . pg_escape_string( $_POST['adresse'] ) .
-
-
-//echo $sql;
 
 # Try query or error
 $rs = pg_query($conn, $sql);
