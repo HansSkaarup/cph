@@ -355,9 +355,6 @@
         //Display name and type of train station/metro - possible future things relating to public transportation.
         document.getElementById("showdata4").innerHTML = 'The closest train or metro station is ' + traindata.features["0"].properties.navn + ' ' + traindata.features["0"].properties.objekt_typ + '.',
 
-
-
-
         //Gathers the needed coordinates for pg_routing in a variable so it can be send to a PHP script.
         coordinates = adressedata.features["0"].geometry.coordinates["0"] + ',' +
                         adressedata.features["0"].geometry.coordinates["1"] + ',' +
