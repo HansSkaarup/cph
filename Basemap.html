@@ -64,10 +64,10 @@
     <div class="sidebar-tabs">
         <ul role="tablist">
             <li><a href="#home" role="tab"><i class="fa fa-search"></i></a></li>
-            <li><a href="#ageStructure" role="tab"><i class="fa fa-bar-chart"></i></a></li>
-            <li><a href="#parks" role="tab"><i class="fa fa-leaf"></i></a></li>
-            <li><a href="#transit" role="tab"><i class="fa fa-train"></i></a></li>
-            <li><a href="#heatmap" role="tab"><i class="fa fa-map-o"></i></a></li>
+            <li id="sidebarlocked1" class="disabled"><a href="#ageStructure" role="tab"><i class="fa fa-bar-chart"></i></a></li>
+            <li id="sidebarlocked2" class="disabled"><a href="#parks" role="tab"><i class="fa fa-leaf"></i></a></li>
+            <li id="sidebarlocked3" class="disabled"><a href="#transit" role="tab"><i class="fa fa-train"></i></a></li>
+            <li id="sidebarlocked4" class="disabled"><a href="#heatmap" role="tab"><i class="fa fa-map-o"></i></a></li>
             <li><a href="https://github.com/hansskaarup/cph" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
         </ul>
 
@@ -359,7 +359,14 @@
         coordinates = adressedata.features["0"].geometry.coordinates["0"] + ',' +
                         adressedata.features["0"].geometry.coordinates["1"] + ',' +
                         traindata.features["0"].geometry.coordinates["0"],
-        console.log(coordinates)
+        console.log(coordinates),
+
+		//Enables sidebars with information
+		document.getElementById("sidebarlocked1").classList.remove("disabled"),
+		document.getElementById("sidebarlocked2").classList.remove("disabled"),
+		document.getElementById("sidebarlocked3").classList.remove("disabled"),
+		document.getElementById("sidebarlocked4").classList.remove("disabled")
+
 
       //.then function that runs either "pgrouting" on success or "failpgrouting" if the function showdata does not run properly
     ).then(pgrouting, failpgrouting)
