@@ -103,21 +103,29 @@
 
         <div class="sidebar-pane" id="ageStructure">
             <div id="chartContainer" style="position: absolute; padding-top: 50px"></div>
-            <h1 class="sidebar-header">age structure<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <h1 class="sidebar-header">Socio Data<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             <div id="chartContainer2" style=" padding-top: 450px"></div>
             <p class="lorem" style="font-size:12px; margin-top:450px;">Data sourced from Københavns Kommune GIS department</p>
         </div>
 
         <div class="sidebar-pane" id="parks">
-            <h1 class="sidebar-header">green spaces nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <h1 class="sidebar-header">Green spaces nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             <p id="showdata3"></p>
             <p class="lorem" style="font-size:12px; margin-top:400px;">Data sourced from DAWA & Copenhagen Data</p>
         </div>
         <div class="sidebar-pane" id="transit">
-            <h1 class="sidebar-header">transit nearby<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            <h1 class="sidebar-header">Transit<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
 
             <p id="showdata4"></p>
             <p id="showdata5"></p>
+
+            <p>_______________________________________________</p>
+            <p><label for="adgangsadresse-autocomplete">Enter another address in Copenhagen to find the shortest route between them:</label></p>
+            <input type="text" id="adgangsadresse-autocomplete2" style="width: 350px;">
+            <button type="button" onclick=commuteroute()><b>Find Route</b></button>
+
+            <p id="showdata8"></p>
+            <p id="showdata7"></p>
 
         </div>
         <div class="sidebar-pane" id="heatmap">heatmap</div>
@@ -144,6 +152,7 @@
     var rodedata;
     var traindata;
     var educationData;
+    var commute;
 
     //Variables containing custom markers based on the "AwesomeMarkers" library.
     var redMarker = new L.AwesomeMarkers.icon({
@@ -163,6 +172,9 @@
     //adds markers and geojson datapoints to a group - used for refreshing/clearing already loaded data
     var layerGroup = L.layerGroup();
     layerGroup.addTo(mymap);
+    //adds commute pgrouting to a seperate layergroup for seperate refreshing of already loaded data
+    var layerGroup2 = L.layerGroup();
+    layerGroup2.addTo(mymap);
     //load a tile layer Mapbox Streets tile layer
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
@@ -210,6 +222,22 @@
 
         }
     });
+
+        //Autocomplete search function
+    $('#adgangsadresse-autocomplete2').dawaautocomplete({
+        baseUrl: 'http://dawa.aws.dk',
+        minLength: 1,
+        adgangsadresserOnly: true,
+        params: {kommunekode: 101},
+        // This function is called when the user chooses an address.
+        select: function(event, input) {
+            commute = input.tekst;
+            console.log(commute);
+
+        }
+    });
+
+
         //This function runs the "sqlfunction" below if a user presses Enter, and only the enter button, in the address input box.
     var runsqlfunction = document.getElementById("adgangsadresse-autocomplete");
     runsqlfunction.addEventListener("keydown", function (enter) {
@@ -300,6 +328,8 @@
                 console.log(data2);
 
             }),
+
+
            // Get the education data from the database for the chart
             $.getJSON('php/education.php?adresse=' + adress, function(data6) {
                 educationData = data6.data;
@@ -427,6 +457,79 @@
                 document.getElementById("showdata6").innerHTML = parkRating + trainRating + ' out of 4';
         }
     )};
+
+
+    function commuteroute() {
+            //Refreshes/Clears the search shown on the map.
+            layerGroup2.clearLayers();
+
+        $.when(
+                $.getJSON('php/Commute.php?comaddress=' + commute, function (data7) {
+                    console.log(data7);
+                    commutedata = data7;
+                    var geojsonphp6 = new L.GeoJSON(data7, {
+                        pointToLayer: function (feature, latlng) {
+                            return L.marker(latlng, {
+                                icon: redMarker
+                            });
+                        },
+                        onEachFeature: function (feature, layer) {
+                            layer.bindPopup("<strong>" + feature.properties.adresse + "</strong><br/>")
+                        }
+                    });
+
+                    layerGroup2.addLayer(geojsonphp6);
+                })
+        ).then(commutecoordinates)
+    };
+    function commutecoordinates() {
+
+        //Getjson that skips the process of creating a seperate variable for storing and ordering coordinates
+        $.getJSON('php/pgrouting.php?coordinates=' + adressedata.features["0"].geometry.coordinates["0"] + ',' +
+                adressedata.features["0"].geometry.coordinates["1"] + ',' +
+                commutedata.features["0"].geometry.coordinates["0"] + ',' +
+                commutedata.features["0"].geometry.coordinates["1"], function (data8) {
+            commutepgroutingdata = data8;
+            console.log(data8);
+
+            //Iteration function that summarizes the length values of the returned ways by parsing them to floats (send
+            // as strings by the php script) and adding them together into the sumdistance variable.
+            var sumdistance = 0,
+                    features = commutepgroutingdata.features,
+                    i;
+            for (i = 0; i < features.length; i++) { //loop through array
+                sumdistance += parseFloat(features[i].properties.cost);
+            }
+            //Display result of iterating function to sidebar using Math.round to remove comma values and make it readable.
+            document.getElementById("showdata7").innerHTML = 'Distance: ' + Math.round(sumdistance) + ' metres.';
+            console.log(sumdistance);
+            document.getElementById("showdata8").innerHTML = 'The shortest commute route between '
+                    + adressedata.features["0"].properties.adresse + ' and '
+                    + commutedata.features["0"].properties.adresse + ' is represented by the lightblue line.';
+
+            //Display pg_routing result to map.
+            var pgrouting2leaflet2 = new L.GeoJSON(data8, {
+                /* style: function(feature){
+                        return { color: "#223b84", dashArray: "1 7", weight: 6}
+                    }, */
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup("<strong>" + "Shortest commute path" + "</strong><br/>")
+                    }
+                })
+
+                layerGroup2.addLayer(pgrouting2leaflet2);
+        })
+        };
+
+
+        /*
+     commutecoordinates = adressedata.features["0"].geometry.coordinates["0"] + ',' +
+                        adressedata.features["0"].geometry.coordinates["1"] + ',' +
+                        commutedata.features["0"].geometry.coordinates["0"] + ',' +
+                        commutedata.features["0"].geometry.coordinates["1"];
+        console.log(commutecoordinates)
+        */
+
 
 
 
