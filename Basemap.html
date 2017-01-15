@@ -252,6 +252,8 @@
     function sqlfunction() {
         //Refreshes/Clears the search shown on the map.
         layerGroup.clearLayers();
+        //Refreshes/Clears the commute routing when changing original address shown on the map.
+        layerGroup2.clearLayers();
         // getJSON function that communicates with the PHP file(s) we created
         // And "adress" being the variable (street name, house number, postal code and postal name) for the SQL that gets sent to the the PHP document we call.
         $.when($.getJSON('php/Adressgetjson.php?adresse=' + adress, function (msg) {
