@@ -105,6 +105,7 @@
             <div id="chartContainer" style="position: absolute; padding-top: 50px"></div>
             <h1 class="sidebar-header">Socio Data<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
             <div id="chartContainer2" style=" padding-top: 450px"></div>
+            <div id="chartContainer3" style=" padding-top: 850px"></div>
             <p class="lorem" style="font-size:12px; margin-top:450px;">Data sourced from Københavns Kommune GIS department</p>
         </div>
 
@@ -153,6 +154,7 @@
     var traindata;
     var educationData;
     var commute;
+    var housing;
 
     //Variables containing custom markers based on the "AwesomeMarkers" library.
     var redMarker = new L.AwesomeMarkers.icon({
@@ -336,7 +338,7 @@
             }),
 
 
-           // 1Get the education data from the database for the chart
+           // Get the education data from the database for the chart
             $.getJSON('php/education.php?adresse=' + adress, function(data6) {
                 educationData = data6.data;
                 console.log(educationData);
@@ -355,6 +357,26 @@
         });
         chart2.render();
       }),
+
+            // Get the housing data from the database for the chart
+            $.getJSON('php/housing.php?adresse=' + adress, function(data9) {
+                housing = data9.data;
+                console.log(housing);
+                //Create chart to be displayed in chartContainer3
+                var chart3 = new CanvasJS.Chart("chartContainer3", {
+                    theme: "theme6",
+                    animationEnabled: true,
+                    width:300,
+                    title: {
+                        text: "Housing types %"
+                    },
+                    data: [{
+                        type: "column",
+                        dataPoints: housing
+                    }]
+                });
+                chart3.render();
+            }),
 
         // Get the age data from the database for the chart
             $.getJSON('php/socio.php?adresse=' + adress, function(data5) {
