@@ -37,7 +37,7 @@ if (!$rs) {
 # Build GeoJSON
 $dataOutput = '';
 $labelArray = array(
-    "ingen", "gymnasie", "under", "erhhverv", "kort_vid", "mellem_vid", "lang_vid"
+    "none", "highschool", "studying", "vocational", "certificate", "bachelor", "master"
 );
 while ($row = pg_fetch_assoc($rs)) {
     $i = 0;
