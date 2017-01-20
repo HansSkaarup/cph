@@ -45,7 +45,7 @@ while ($row = pg_fetch_assoc($rs)) {
         # example line { y: 9.21, label: "0-5" },
 
         $dataOutput .= '{ "y": ' . escapeJsonString($val) . ', "label": "' . $labelArray[$i] . '"}';
-        if ($i != 5){
+        if ($i != 4){
             $dataOutput .= ',';
         }
         $i ++;
