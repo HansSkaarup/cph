@@ -27,6 +27,8 @@
     <script src="lib/canvasjs.min.js"></script>
     <!--include geoJson file-->
     <script src="lib/heatmap.geojson"></script>
+    <script src="lib/bbr_final.geojson"></script>
+    <script src="lib/Autolinker.min.js"></script>
     <style type="text/css">
         /*Set font*/
         h1 {
@@ -193,7 +195,76 @@
     var sidebar = L.control.sidebar('sidebar', {position: 'right'}).addTo(mymap);
 
     //imports the geojson file to a layergroup. The heatmap settings is still under construction.
-    var heatmapLayer = new L.layerGroup(); //adds geojson layer
+    var heatmapLayer = new L.layerGroup(heatmap, bbr_layer); //adds geojson layer
+
+
+     		function pop_bbrfinal(feature, layer) {
+			var popupContent = '<table><tr><th scope="row">rode_nr</th><td>' + Autolinker.link(String(feature.properties['rode_nr'])) + '</td></tr><tr><th scope="row">m2_2016</th><td>' + Autolinker.link(String(feature.properties['m2_2016'])) + '</td></tr><tr><th scope="row">m2_2015</th><td>' + Autolinker.link(String(feature.properties['m2_2015'])) + '</td></tr><tr><th scope="row">m2_2014</th><td>' + Autolinker.link(String(feature.properties['m2_2014'])) + '</td></tr><tr><th scope="row">m2_2013</th><td>' + Autolinker.link(String(feature.properties['m2_2013'])) + '</td></tr><tr><th scope="row">m2_2012</th><td>' + Autolinker.link(String(feature.properties['m2_2012'])) + '</td></tr><tr><th scope="row">m2_2011</th><td>' + Autolinker.link(String(feature.properties['m2_2011'])) + '</td></tr><tr><th scope="row">m2_2010</th><td>' + Autolinker.link(String(feature.properties['m2_2010'])) + '</td></tr></table>';
+			layer.bindPopup(popupContent);
+		}
+
+		function doStylebbrfinal(feature) {
+			if (feature.properties.m2_2016 >= 3041.0 && feature.properties.m2_2016 <= 12622.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#1a9850',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+			if (feature.properties.m2_2016 >= 12622.0 && feature.properties.m2_2016 <= 32553.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#91cf60',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+			if (feature.properties.m2_2016 >= 32553.0 && feature.properties.m2_2016 <= 47909.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#d9ef8b',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+			if (feature.properties.m2_2016 >= 47909.0 && feature.properties.m2_2016 <= 92136.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#fee08b',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+			if (feature.properties.m2_2016 >= 92136.0 && feature.properties.m2_2016 <= 243423.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#fc8d59',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+			if (feature.properties.m2_2016 >= 243423.0 && feature.properties.m2_2016 <= 1355899.0) {
+				return {
+					color: '#000000',
+					weight: '1.3',
+					fillColor: '#d73027',
+					opacity: '1.0',
+					fillOpacity: '1.0',
+				}
+			}
+		}
+		 var bbr_layer = new L.geoJson(bbrdata, {
+			onEachFeature: pop_bbrfinal,
+			style: doStylebbrfinal
+		}).addTo(heatmapLayer);;
+
+
     var heatmapStyle = {
         color: "#971bf7",
         fillColor: "#971bf7",
@@ -204,8 +275,12 @@
         style: heatmapStyle
     }).addTo(heatmapLayer);
 
+
     var overlay = {
-        "heatmap":heatmap
+        "heatmap": heatmap,
+        "AverageSqmprice": bbr_layer
+
+
 
     };
     //Layercontrol creation and position in the bottomleft corner. This controls the heatmap layer visibility.
